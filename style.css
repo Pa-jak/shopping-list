@@ -37,6 +37,17 @@ button {
   border-radius: 4px;
 }
 
+#clear-packed {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
@@ -59,14 +70,9 @@ li.packed {
   background: #d4edda;
 }
 
-#clear-packed {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  margin-top: 10px;
+h3 {
+  margin-top: 20px;
+  color: #333;
+  font-size: 18px;
+  border-bottom: 1px solid #ccc;
 }
-
