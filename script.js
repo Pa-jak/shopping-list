@@ -35,3 +35,10 @@ form.addEventListener('submit', (e) => {
 });
 
 renderItems();
+
+document.getElementById('clear-packed').addEventListener('click', () => {
+  items = items.filter(item => !item.packed);
+  saveItems();
+  renderItems();
+});
+
