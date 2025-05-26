@@ -58,3 +58,15 @@ li.packed {
   color: gray;
   background: #d4edda;
 }
+
+#clear-packed {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
