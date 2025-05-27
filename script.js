@@ -1,16 +1,16 @@
+const BACKEND_URL = "https://openai-kategoryzator.onrender.com";
+const LIST_ID = "glowna";
 const form = document.getElementById('item-form');
 const input = document.getElementById('item-input');
 const list = document.getElementById('item-list');
-let items = JSON.parse(localStorage.getItem('items')) || [];
 
 const getCategory = async (productName) => {
   try {
-    const res = await fetch('https://openai-kategoryzator.onrender.com/kategoria', {
+    const res = await fetch(`${BACKEND_URL}/kategoria`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ produkt: productName })
     });
-
     const data = await res.json();
     return data.kategoria || 'Inne';
   } catch (err) {
@@ -19,18 +19,18 @@ const getCategory = async (productName) => {
   }
 };
 
-const saveItems = () => {
-  localStorage.setItem('items', JSON.stringify(items));
+const fetchItems = async () => {
+  const res = await fetch(`${BACKEND_URL}/lista/${LIST_ID}`);
+  const items = await res.json();
+  renderItems(items);
 };
 
-const renderItems = () => {
+const renderItems = (items) => {
   list.innerHTML = '';
 
   const grouped = {};
   items.forEach(item => {
-    if (!grouped[item.category]) {
-      grouped[item.category] = [];
-    }
+    if (!grouped[item.category]) grouped[item.category] = [];
     grouped[item.category].push(item);
   });
 
@@ -39,19 +39,17 @@ const renderItems = () => {
     header.textContent = category;
     list.appendChild(header);
 
-    grouped[category].forEach((item, index) => {
+    grouped[category].forEach(item => {
       const li = document.createElement('li');
       li.textContent = item.name;
       if (item.packed) li.classList.add('packed');
-      li.addEventListener('click', () => {
-        const realIndex = items.findIndex(
-          el => el.name === item.name && el.category === item.category
-        );
-        if (realIndex !== -1) {
-          items[realIndex].packed = !items[realIndex].packed;
-          saveItems();
-          renderItems();
-        }
+      li.addEventListener('click', async () => {
+        await fetch(`${BACKEND_URL}/lista/${LIST_ID}/oznacz`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: item.name })
+        });
+        fetchItems();
       });
       list.appendChild(li);
     });
@@ -63,17 +61,21 @@ form.addEventListener('submit', async (e) => {
   const name = input.value.trim();
   if (name) {
     const category = await getCategory(name);
-    items.push({ name, category, packed: false });
-    saveItems();
-    renderItems();
+    await fetch(`${BACKEND_URL}/lista/${LIST_ID}/dodaj`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, category })
+    });
     input.value = '';
+    fetchItems();
   }
 });
 
-document.getElementById('clear-packed').addEventListener('click', () => {
-  items = items.filter(item => !item.packed);
-  saveItems();
-  renderItems();
+document.getElementById('clear-packed').addEventListener('click', async () => {
+  await fetch(`${BACKEND_URL}/lista/${LIST_ID}/wyczysc`, {
+    method: 'POST'
+  });
+  fetchItems();
 });
 
-renderItems();
+fetchItems();
