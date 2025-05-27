@@ -5,7 +5,7 @@ let items = JSON.parse(localStorage.getItem('items')) || [];
 
 const getCategory = async (productName) => {
   try {
-    const res = await fetch('https://openai-kategoryzator.onrender.com', {
+    const res = await fetch('https://openai-kategoryzator.onrender.com/kategoria', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ produkt: productName })
